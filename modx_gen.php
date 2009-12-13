@@ -8,21 +8,6 @@
  *
  */
 
-/**
- * USAGE:
- * php modx_gen.php -o path/to/unchanged/dir (or file) -n path/to/changed/dir (or file)
- *
- * The parameters to modx_gen.php needs to be after "php modx_gen.php".
- * -o, --old = Original files, path can be absolute or relative.
- * -n, --new = Modified files, path can be absolute or relative.
- * -c, --custom = This is an install file for a addition style or language (subsilver2 is a additional style).
- *       Without --custom only the prosilver style and English language will be compared.
- *       Additional languages and styles need separate install files.
- * -h, --help = print this text.
- * -f, --outfile = path and name of file to generate. Defautls to stdout
- * -v, --verbose = Tell what happens.
- */
-
 // Get the execution time.
 // Should be removed before final release.
 $mtime = microtime();

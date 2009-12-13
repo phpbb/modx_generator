@@ -5,11 +5,14 @@ Do note that this is early beta. Read the issues file.
 Authors:	Jari Kanerva (tumba25)
 
 USAGE:
-php modx_diff.php -o path/to/unchanged/dir (or file) -n path/to/changed/dir (or file)
+php modx_gen.php -o path/to/unchanged/dir (or file) -n path/to/changed/dir (or file)
 
-The parameters to modx_diff.php needs to be after "php modx_diff.php".
--o,  --old = The original files, with path from / or the current dir.
--n, --new = The modified files, with path from / or the current dir.
-      Both old and new need to be either files or dirs.
--f, --outfile = path and name of file to generate. Defautls to ./install_mod.xml
+The parameters to modx_gen.php needs to be after "php modx_gen.php".
+-o, --old = Original files, path can be absolute or relative.
+-n, --new = Modified files, path can be absolute or relative.
+-c, --custom = This is an install file for a addition style or language (subsilver2 is a additional style).
+      Without --custom only the prosilver style and English language will be compared.
+      Additional languages and styles need separate install files.
+-h, --help = print this text.
+-f, --outfile = path and name of file to generate. Defautls to stdout
 -v, --verbose = Tell what happens.
