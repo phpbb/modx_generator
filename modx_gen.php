@@ -33,7 +33,7 @@ require($script_path . 'functions.' . $phpEx);
 
 $args = parse_args($argv);
 
-$slap = $diff_files = $diff_dirs = $file_copy = $where_changes = false;
+$slap = $diff_files = $diff_dirs = $where_changes = false;
 if (empty($args['old']) || empty($args['new']) || isset($args['help']))
 {
 	$slap = true;
@@ -128,7 +128,7 @@ else
 	{
 		echo 'Checking for missing files' . "\n";
 	}
-	check_missing($old_arr, $new_arr);
+	$where_changes = check_missing($old_arr, $new_arr);
 
 	foreach ($old_arr as $file)
 	{
@@ -186,7 +186,10 @@ if (isset($xml) && $where_changes)
 	$out_file = (isset($args['outfile'])) ? $args['outfile'] : '';
 	$xml->modx_close($out_file);
 }
-
+else
+{
+	echo 'There where no changes' . "\n";
+}
 // Should be removed before final release.
 echo 'Memory peak: ' . memory_get_peak_usage(true) . "\n";
 $mtime = microtime();

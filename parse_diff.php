@@ -729,7 +729,7 @@ class parse_diff
 					}
 					$cnt++;
 				}
-				else if (!empty($value['add']) && !empty($value['del']))
+				else
 				{
 					// This is a replace
 					$inline_find = '';
@@ -738,9 +738,12 @@ class parse_diff
 						$inline_find .= $char;
 					}
 					$inline_add = '';
-					foreach ($value['add'] as $char)
+					if (!empty($value['add']))
 					{
-						$inline_add .= $char;
+						foreach ($value['add'] as $char)
+						{
+							$inline_add .= $char;
+						}
 					}
 
 					// In-line replaces needs two finds.
@@ -762,42 +765,12 @@ class parse_diff
 					$changes[$cnt]['add-type'] = REPLACE;
 					$cnt++;
 				}
-				else if (empty($value['add']) && !empty($value['del']))
-				{
-					// This is a delete
-					$inline_find = '';
-					foreach ($value['del'] as $char)
-					{
-						$inline_find .= $char;
-					}
 
-					// In-line deletes also needs two finds.
-					$i = $key - 1;
-					while ($i >= 0 && !@is_array($row_diff[$i]))
-					{
-						// The deletes are always add after.
-						$str = (isset($changes[$cnt]['inline-find'][0])) ? $changes[$cnt]['inline-find'][0] : '';
-						$changes[$cnt]['inline-find'][0] = (isset($row_diff[$i]) && $i > $last_find) ? $row_diff[$i] . $str : $str;
-						$i--;
-					}
-					$last_find = $key - 1;
-
-					// We'll ignore the first find if it only contains whitespace
-					$i = (trim($changes[$cnt]['inline-find'][0]) == '') ? 0 : 1;
-					$changes[$cnt]['inline-find'][$i] = '';
-					foreach ($value['del'] as $char)
-					{
-						$changes[$cnt]['inline-find'][$i] .= $char;
-					}
-					$changes[$cnt]['add'] = '';
-					$changes[$cnt]['add-type'] = REPLACE;
-					$cnt++;
-				}
 				// Unset empty finds so mark_finds get a easier job.
 				// Can't use empty() here because that removes strings containing only a zero.
 				if (isset($changes[$cnt - 1]['inline-find'][0]) && $changes[$cnt - 1]['inline-find'][0] == '')
 				{
-					unset($changes[$cnt-1]['inline-find'][0]);
+					unset($changes[$cnt-1]['inline-find']);
 				}
 			}
 		}
@@ -1042,6 +1015,7 @@ class parse_diff
 				{
 					$diff_arr[$i]['close'] = true;
 				}
+
 				// Now to check if this edit has any finds or not.
 				if (isset($diff_arr[$i][$find]))
 				{
@@ -1055,6 +1029,7 @@ class parse_diff
 				}
 			}
 		}
+
 		return($diff_arr);
 	}
 

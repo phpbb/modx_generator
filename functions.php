@@ -77,7 +77,7 @@ function check_missing($old_arr, $new_arr)
 				$where_changes = true;
 				$xml->startElement('copy');
 			}
-			// On Windows the directory separator will be \, so we need to replace that.
+			// On Windows the directory separator will be \, so we need to handle that.
 			$file = str_replace('\\', '/', $file);
 			$xml->write_element('file', '', array('from' => 'root/' . $file, 'to' => $file));
 		}
@@ -85,7 +85,10 @@ function check_missing($old_arr, $new_arr)
 	if ($missing)
 	{
 		$xml->endElement();
+		return(true);
 	}
+
+	return(false);
 }
 
 /**
