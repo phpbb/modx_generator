@@ -694,7 +694,7 @@ class parse_diff
 				{
 					// This is a add
 					// We want at least 6 chars for the inline find.
-					$changes[$cnt]['inline-find'] = '';
+					$changes[$cnt]['inline-find'][0] = '';
 					if ($key <= 2)
 					{
 						// The change is in the beginning of the line.
@@ -702,7 +702,7 @@ class parse_diff
 						while ($i < $end && !@is_array($row_diff[$i]))
 						{
 							// $row_diff[$i] might have been removed.
-							$changes[$cnt]['inline-find'] .= (isset($row_diff[$i])) ? $row_diff[$i] : '';
+							$changes[$cnt]['inline-find'][0] .= (isset($row_diff[$i])) ? $row_diff[$i] : '';
 							$i++;
 						}
 						$last_find = $i - 1;
@@ -714,7 +714,7 @@ class parse_diff
 						while ($i >= 0 && !@is_array($row_diff[$i]))
 						{
 							// We have enough finds to do a add after.
-							$changes[$cnt]['inline-find'] = (isset($row_diff[$i]) && $i > $last_find) ? $row_diff[$i] . $changes[$cnt]['inline-find'] : $changes[$cnt]['inline-find'];
+							$changes[$cnt]['inline-find'][0] = (isset($row_diff[$i]) && $i > $last_find) ? $row_diff[$i] . $changes[$cnt]['inline-find'][0] : $changes[$cnt]['inline-find'][0];
 							$i--;
 						}
 						$last_find = $key - 1;
@@ -743,7 +743,21 @@ class parse_diff
 						$inline_add .= $char;
 					}
 
-					$changes[$cnt]['inline-find'] = $inline_find;
+					// In-line replaces needs two finds.
+					$i = $key - 1;
+					while ($i >= 0 && !@is_array($row_diff[$i]))
+					{
+						// The replaces are always add after.
+						// This find is just to make sure the replace searches for the right string to replace.
+						$str = (isset($changes[$cnt]['inline-find'][0])) ? $changes[$cnt]['inline-find'][0] : '';
+						$changes[$cnt]['inline-find'][0] = (isset($row_diff[$i]) && $i > $last_find) ? $row_diff[$i] . $str : $str;
+						$i--;
+					}
+					$last_find = $key - 1;
+
+					// We'll ignore the first find if it only contains whitespace
+					$i = (trim($changes[$cnt]['inline-find'][0]) == '') ? 0 : 1;
+					$changes[$cnt]['inline-find'][$i] = $inline_find;
 					$changes[$cnt]['add'] = $inline_add;
 					$changes[$cnt]['add-type'] = REPLACE;
 					$cnt++;
@@ -757,10 +771,23 @@ class parse_diff
 						$inline_find .= $char;
 					}
 
-					$changes[$cnt]['inline-find'] = '';
+					// In-line deletes also needs two finds.
+					$i = $key - 1;
+					while ($i >= 0 && !@is_array($row_diff[$i]))
+					{
+						// The deletes are always add after.
+						$str = (isset($changes[$cnt]['inline-find'][0])) ? $changes[$cnt]['inline-find'][0] : '';
+						$changes[$cnt]['inline-find'][0] = (isset($row_diff[$i]) && $i > $last_find) ? $row_diff[$i] . $str : $str;
+						$i--;
+					}
+					$last_find = $key - 1;
+
+					// We'll ignore the first find if it only contains whitespace
+					$i = (trim($changes[$cnt]['inline-find'][0]) == '') ? 0 : 1;
+					$changes[$cnt]['inline-find'][$i] = '';
 					foreach ($value['del'] as $char)
 					{
-						$changes[$cnt]['inline-find'] .= $char;
+						$changes[$cnt]['inline-find'][$i] .= $char;
 					}
 					$changes[$cnt]['add'] = '';
 					$changes[$cnt]['add-type'] = REPLACE;
@@ -768,9 +795,9 @@ class parse_diff
 				}
 				// Unset empty finds so mark_finds get a easier job.
 				// Can't use empty() here because that removes strings containing only a zero.
-				if (isset($changes[$cnt - 1]['inline-find']) && $changes[$cnt - 1]['inline-find'] == '')
+				if (isset($changes[$cnt - 1]['inline-find'][0]) && $changes[$cnt - 1]['inline-find'][0] == '')
 				{
-					unset($changes[$cnt-1]['inline-find']);
+					unset($changes[$cnt-1]['inline-find'][0]);
 				}
 			}
 		}
@@ -818,7 +845,7 @@ class parse_diff
 				{
 					// This is a add
 					// We want at least 6 chars for the inline find.
-					$changes[$cnt]['inline-find'] = '';
+					$changes[$cnt]['inline-find'][0] = '';
 					if ($key <= 6)
 					{
 						// The change is in the beginning of the line.
@@ -826,7 +853,7 @@ class parse_diff
 						while ($i < $end && !@is_array($row_diff[$i]))
 						{
 							// $row_diff[$i] might have been removed.
-							$changes[$cnt]['inline-find'] .= (isset($row_diff[$i])) ? $row_diff[$i] : '';
+							$changes[$cnt]['inline-find'][0] .= (isset($row_diff[$i])) ? $row_diff[$i] : '';
 							$i++;
 						}
 						$last_find = $i - 1;
@@ -838,7 +865,7 @@ class parse_diff
 						while ($i >= 0 && !@is_array($row_diff[$i]))
 						{
 							// We have enough finds to do a add after.
-							$changes[$cnt]['inline-find'] = (isset($row_diff[$i]) && $i > $last_find) ? $row_diff[$i] . $changes[$cnt]['inline-find'] : $changes[$cnt]['inline-find'];
+							$changes[$cnt]['inline-find'][0] = (isset($row_diff[$i]) && $i > $last_find) ? $row_diff[$i] . $changes[$cnt]['inline-find'][0] : $changes[$cnt]['inline-find'][0];
 							$i--;
 						}
 						$last_find = $key - 1;
@@ -867,7 +894,7 @@ class parse_diff
 						$inline_add .= $char;
 					}
 
-					$changes[$cnt]['inline-find'] = $inline_find;
+					$changes[$cnt]['inline-find'][0] = $inline_find;
 					$changes[$cnt]['add'] = $inline_add;
 					$changes[$cnt]['add-type'] = REPLACE;
 					$cnt++;
@@ -881,10 +908,10 @@ class parse_diff
 						$inline_find .= $char;
 					}
 
-					$changes[$cnt]['inline-find'] = '';
+					$changes[$cnt]['inline-find'][0] = '';
 					foreach ($value['del'] as $char)
 					{
-						$changes[$cnt]['inline-find'] .= $char;
+						$changes[$cnt]['inline-find'][0] .= $char;
 					}
 					$changes[$cnt]['add'] = '';
 					$changes[$cnt]['add-type'] = REPLACE;
@@ -892,9 +919,9 @@ class parse_diff
 				}
 				// Unset empty finds so mark_finds get a easier job.
 				// Can't use empty() here because that removes strings containing only a zero.
-				if (isset($changes[$cnt - 1]['inline-find']) && $changes[$cnt - 1]['inline-find'] == '')
+				if (isset($changes[$cnt - 1]['inline-find'][0]) && $changes[$cnt - 1]['inline-find'][0] == '')
 				{
-					unset($changes[$cnt-1]['inline-find']);
+					unset($changes[$cnt-1]['inline-find'][0]);
 				}
 			}
 		}

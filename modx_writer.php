@@ -13,6 +13,10 @@
  */
 class modx_writer extends XMLWriter
 {
+	/**
+	 * These vars needs to be set by the caller.
+	 */
+	var $modx_version = 'modx-1.2.3.xsd';  // The current MODX version.
 
 	/**
 	 * Starts the xml and writes the header.
@@ -32,7 +36,7 @@ class modx_writer extends XMLWriter
 		// <mod>
 		$this->startElement('mod');
 		$this->writeAttribute('xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance');
-		$this->writeAttribute('xmlns', 'http://www.phpbb.com/mods/xml/modx-1.2.3.xsd');
+		$this->writeAttribute('xmlns', 'http://www.phpbb.com/mods/xml/' . $this->modx_version);
 
 		// <header>
 		$this->startElement('header');
@@ -147,13 +151,18 @@ class modx_writer extends XMLWriter
 								$change_type = 'after-add';
 							break;
 						}
-						if(isset($change['inline-find']))
+						if (isset($change['inline-find']))
 						{
 							$this->startElement('inline-edit');
-							$this->write_element('inline-find', $change['inline-find']);
+							$this->write_element('inline-find', $change['inline-find'][0]);
+							if (isset($change['inline-find'][1]))
+							{
+								// In-line replaces has  two finds.
+								$this->write_element('inline-find', $change['inline-find'][1]);
+							}
 						}
 						$this->write_element('inline-action', $change['add'], array('type' => $change_type));
-						if(isset($change['close']))
+						if (isset($change['close']))
 						{
 							$this->endElement();
 						}
