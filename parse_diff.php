@@ -416,8 +416,9 @@ class parse_diff
 					{
 						// These should only be comments
 						// All comments gets replaced. We don't care about inline stuff for them.
+						// They need two finds to make sure we replace the right line.
+						$this->gen_find($file_diff, $num, $last_change, $row['find'], $row['del']);
 						$row['add-type'] = REPLACE;
-						$row['find'][0] = $row['del'];
 					}
 					else
 					{
@@ -738,7 +739,7 @@ class parse_diff
 						$inline_find .= $char;
 					}
 					$inline_add = '';
-					if (!empty($value['add']))
+					if (isset($value['add']))
 					{
 						foreach ($value['add'] as $char)
 						{
