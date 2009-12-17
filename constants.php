@@ -8,9 +8,11 @@
  *
  */
 
-// Some deafults
+//MODX version
+define('MODX_VERSION', '1.2.3');
+
 // Search rows needs to be high to avoid identical finds.
-define('SEARCH_ROWS', 10);
+define('SEARCH_ROWS', 8);
 
 // Diff options.
 define('DIFF_BASIC', 0);

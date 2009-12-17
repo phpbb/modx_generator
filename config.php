@@ -22,6 +22,7 @@ $ignore = array(
 	'config.php',
 	'store',
 	'docs',
+	'.svn',
 );
 
 /**

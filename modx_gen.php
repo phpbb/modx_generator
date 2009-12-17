@@ -65,6 +65,7 @@ if ($slap)
 	echo '-h, --help = print this text.' . "\n";
 	echo '-f, --outfile = path and name of file to generate. Defautls to stdout.' . "\n";
 	echo '-v, --verbose = tell what happens.' . "\n";
+//	echo '-r, --ignore-version = ignore the version info at the top of files.' . "\n";
 	exit;
 }
 

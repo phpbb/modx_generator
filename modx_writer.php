@@ -68,6 +68,7 @@ class modx_writer extends XMLWriter
 		}
 
 		$this->startElement($name);
+
 		if ($attributes != false)
 		{
 			foreach ($attributes as $key => $value)
@@ -78,6 +79,7 @@ class modx_writer extends XMLWriter
 				}
 			}
 		}
+
 		if ($text != '')
 		{
 			// We need to check for <![CDATA[ ]]> in the strings.

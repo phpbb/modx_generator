@@ -428,7 +428,7 @@ class parse_diff
 						{
 							// Let's check to be sure.
 							$i = $num + 1;
-							while ($file_diff[$i] == '')
+							while (isset($file_diff[$i]) && $file_diff[$i] == '')
 							{
 								$i++;
 							}
@@ -472,9 +472,65 @@ class parse_diff
 		// There might be some deleted keys so lets get them in order again.
 		$file_diff = $this->reset_keys($file_diff);
 
+		// Double adds needs to be merged to one.
+		$file_diff = $this->merge_addafter($file_diff);
+
 		$file_diff = $this->mark_finds($file_diff);
 
 		return($file_diff);
+	}
+
+	/**
+	 * merge_adds
+	 *
+	 * Sometimes when rows are added with just empty lines between them they get
+	 * their own add-after with no find in the last one.
+	 * That would result in <find> - <add-after> - <add-after>
+	 * This function takes care of that.
+	 */
+	private function merge_addafter($file_diff)
+	{
+		$temp_arr = array();
+
+		foreach ($file_diff as $key => &$value)
+		{
+			// If the next $value gets merged to this one it also is unset.
+			if (isset($value))
+			{
+				// This only affect edits. Not in-lines.
+				if (is_array($value) && $value['type'] == EDIT && $value['add-type'] == ADD_AFTER)
+				{
+					// We have a edit that's add-after.
+					// There might be some empty lines between. They cant be used as find, but we need to get past them
+					$i = $key + 1;
+					while (isset($file_diff[$i]) && is_string($file_diff[$i]) && $file_diff[$i] == '')
+					{
+						$i++;
+					}
+
+					// Is the next $value also a edit wiht add-after but no find?
+					if (is_array($file_diff[$i]) && $file_diff[$i]['type'] == EDIT && $file_diff[$i]['add-type'] == ADD_AFTER && !isset($file_diff[$i]['find']))
+					{
+						// The next $value is a add-after with no find.
+						// Lets merge them together with a empty line between.
+						$value['add'] .= "\n\n" . $file_diff[$i]['add'];
+						$temp_arr[] = $value;
+						unset($file_diff[$i]);
+					}
+					else
+					{
+						$temp_arr[] = $value;
+					}
+				}
+				else
+				{
+					$temp_arr[] = $value;
+				}
+			}
+		}
+		unset($key, $value);
+
+		return($temp_arr);
 	}
 
 	/**
@@ -778,6 +834,7 @@ class parse_diff
 		unset($key, $value,$char);
 
 		// Before returning, let's get sure the right in-line edits are closed.
+
 		$changes = $this->mark_finds($changes, true);
 
 		return($cnt);
