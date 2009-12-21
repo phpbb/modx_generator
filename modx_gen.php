@@ -204,10 +204,13 @@ else
 	echo 'There where no changes' . "\n";
 }
 // Should be removed before final release.
-echo 'Memory peak: ' . memory_get_peak_usage(true) . "\n";
-$mtime = microtime();
-$mtime = explode(" ",$mtime);
-$mtime = $mtime[1] + $mtime[0];
-$endtime = $mtime;
-$totaltime = ($endtime - $starttime);
-echo 'Execution time: ' . $totaltime . ' seconds' . "\n";
+if ($args['verbose'])
+{
+	echo 'Memory peak: ' . memory_get_peak_usage(true) . "\n";
+	$mtime = microtime();
+	$mtime = explode(" ",$mtime);
+	$mtime = $mtime[1] + $mtime[0];
+	$endtime = $mtime;
+	$totaltime = ($endtime - $starttime);
+	echo 'Execution time: ' . $totaltime . ' seconds' . "\n";
+}
