@@ -23,3 +23,4 @@ The parameters to modx_gen.php needs to be after "php modx_gen.php".
 -h, --help = print this text.
 -f, --outfile = path and name of file to generate. Defautls to stdout
 -v, --verbose = Tell what happens.
+-i, --ignore-version = ignore the version info at the top of files.

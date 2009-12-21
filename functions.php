@@ -50,12 +50,36 @@ function parse_args($argv)
 				$args['diff_opt'] = DIFF_CUSTOM;
 			break;
 
+			case '-i':
+			case '--ignore-version':
+				$args['ignore'] = true;
+			break;
+
 			default:
 				continue;
 			break;
 		}
 	}
 	return($args);
+}
+
+/**
+ * Removes ingored parts from the files before diffing.
+ */
+function rem_ignore(&$old_file, &$new_file)
+{
+	// The version string is usually at line 5, but it can be anywhere in the beginning.
+	// Let's check the 20 first lines only. And assume it's in the same place in both files.
+	// Otherwise let's diff that to.
+	for ($i = 0; $i < 20; $i++)
+	{
+		if (strpos($old_file[$i], '@version') !== false && strpos($new_file[$i], '@version') !== false)
+		{
+			// The easiest way to ignore them is to make them identical.
+			$new_file[$i] = $old_file[$i];
+			break;
+		}
+	}
 }
 
 /**

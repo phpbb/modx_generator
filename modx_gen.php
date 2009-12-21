@@ -65,7 +65,7 @@ if ($slap)
 	echo '-h, --help = print this text.' . "\n";
 	echo '-f, --outfile = path and name of file to generate. Defautls to stdout.' . "\n";
 	echo '-v, --verbose = tell what happens.' . "\n";
-//	echo '-r, --ignore-version = ignore the version info at the top of files.' . "\n";
+	echo '-i, --ignore-version = ignore the version info at the top of files.' . "\n";
 	exit;
 }
 
@@ -75,6 +75,12 @@ if ($diff_files)
 
 	$old_file = file($args['old']);
 	$new_file = file($args['new']);
+
+	if (isset($args['ignore']))
+	{
+		// Ignore the version strings.
+		rem_ignore($old_file, $new_file);
+	}
 
 	if ($old_file == $new_file)
 	{
@@ -146,6 +152,12 @@ else
 
 		$old_file = file($args['old'] . $file);
 		$new_file = file($args['new'] . $file);
+
+		if (isset($args['ignore']))
+		{
+			// Ignore the version strings.
+			rem_ignore($old_file, $new_file);
+		}
 
 		if ($old_file != $new_file)
 		{
