@@ -9,7 +9,10 @@
  */
 
 //MODX version
-define('MODX_VERSION', '1.2.3');
+if(!defined('MODX_VERSION'))
+{
+	define('MODX_VERSION', '1.2.3');
+}
 
 // Search rows needs to be high to avoid identical finds.
 define('SEARCH_ROWS', 8);

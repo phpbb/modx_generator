@@ -24,7 +24,7 @@ $dir_separator = (strpos($script_path, '/') !== false) ? '/' : '\\';
 require($script_path . 'diff' . $dir_separator . 'Diff.' . $phpEx);
 require($script_path . 'diff' . $dir_separator . 'inline.' . $phpEx);
 
-require($script_path . 'parse_diff.' . $phpEx);
+require($script_path . 'modx_diff.' . $phpEx);
 require($script_path . 'modx_writer.' . $phpEx);
 
 require($script_path . 'constants.' . $phpEx);
@@ -88,7 +88,7 @@ if ($diff_files)
 	$file_diff = $renderer->render($diff);
 	unset($renderer, $diff);
 
-	$parser = new parse_diff();
+	$parser = new modx_diff();
 	$file_diff = $parser->parse($file_diff);
 
 	if (!empty($file_diff))
@@ -122,7 +122,7 @@ else
 	$new_arr = directory_sort($new_arr);
 
 	$xml = new modx_writer();
-	$parser = new parse_diff();
+	$parser = new modx_diff();
 
 	// Start with a check for new files
 	if ($args['verbose'])

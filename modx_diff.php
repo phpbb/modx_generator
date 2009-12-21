@@ -14,14 +14,14 @@
  * $renderer = new Text_Diff_Renderer_inline();
  * $file_diff = $renderer->render($diff));
  */
-class parse_diff
+class modx_diff
 {
 	/**
 	 * The chars that serparate words.
 	 * These will be used for the in-line edits.
 	 * Need to figure out what chars should be counted as separators.
 	 */
-	var $separator = array(
+	private $separator = array(
 		' ', // Space
 		'	', // tab
 		'(',
@@ -834,7 +834,6 @@ class parse_diff
 		unset($key, $value,$char);
 
 		// Before returning, let's get sure the right in-line edits are closed.
-
 		$changes = $this->mark_finds($changes, true);
 
 		return($cnt);
