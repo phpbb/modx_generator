@@ -19,6 +19,7 @@ $ignore = array(
 	'Thumbs.db',
 	'cache',
 	'install',
+	'files',
 	'config.php',
 	'store',
 	'docs',
@@ -26,7 +27,7 @@ $ignore = array(
 );
 
 /**
- * File extensions ignore while diffing
+ * File extensions to ignore while diffing
  * Images and other binary file types.
  */
 $ignore_ext = array(
@@ -38,7 +39,3 @@ $ignore_ext = array(
 	'tar',
 	'rar',
 );
-
-// Ignore version strings like @version $Id$
-// This setting is ignored for now.
-$ignore_file_version = true;
