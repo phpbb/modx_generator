@@ -55,6 +55,11 @@ function parse_args($argv)
 				$args['ignore'] = true;
 			break;
 
+			case '-r':
+			case '--root':
+				$args['root'] = $argv[$key + 1];
+			break;
+
 			default:
 				continue;
 			break;
@@ -85,9 +90,9 @@ function rem_ignore(&$old_file, &$new_file)
 /**
  * Checks the directory arrays for missing files in $old_dir and writes a copy-tag if files are missing.
  */
-function check_missing($old_arr, $new_arr)
+function check_missing($old_arr, $new_arr, $copy = false)
 {
-	global $xml, $where_changes;
+	global $xml, $where_changes, $dir_separator, $args;
 
 	$missing = false;
 
@@ -97,9 +102,47 @@ function check_missing($old_arr, $new_arr)
 		{
 			if (!$missing)
 			{
+				if ($copy)
+				{
+					if (!mkdir($copy . $dir_separator . 'root'))
+					{
+						echo 'Could not create root directory in: ' . $copy . "\n";
+						exit;
+					}
+					$copy .= $dir_separator . 'root' . $dir_separator;
+				}
 				$missing = true;
 				$where_changes = true;
 				$xml->startElement('copy');
+			}
+
+			if ($copy)
+			{
+				// Copy files to root/.
+				// First check that the target directory exists
+				if ($args['verbose'])
+				{
+					echo 'Copying: ' . $file . "\n";
+				}
+				$dir = dirname($file);
+				$dir_arr = explode($dir_separator, $dir);
+				$dir = '';
+				foreach ($dir_arr as $value)
+				{
+					$dir .= (($dir == '') ? '' : $dir_separator) . $value;
+					if(!file_exists($copy . $dir))
+					{
+						if (!mkdir($copy . $dir))
+						{
+							echo 'Could not create: ' . $copy . $dir . "\n";
+						}
+					}
+				}
+				if (!copy($args['new'] . $file, $copy . $file))
+				{
+					echo 'Could not copy: ' . $file . "\n";
+					exit;
+				}
 			}
 			// On Windows the directory separator will be \, so we need to handle that.
 			$file = str_replace('\\', '/', $file);

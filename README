@@ -12,14 +12,16 @@ Do note that this tool is still in beta stage.
 Authors:	Jari Kanerva (tumba25)
 
 USAGE:
-php modx_gen.php -o path/to/unchanged/dir (or file) -n path/to/changed/dir (or file)
+php modx_gen.php -o path/to/unchanged/dir (or file) -n path/to/changed/dir (or file) [-r path/for/root/]
 
 The parameters to modx_gen.php needs to be after "php modx_gen.php".
 -o, --old = Original files, path can be absolute or relative.
 -n, --new = Modified files, path can be absolute or relative.
 -c, --custom = This is an install file for a addition style or language (subsilver2 is a additional style).
-      Without --custom only the prosilver style and English language will be compared.
-      Additional languages and styles need separate install files.
+			Without --custom only the prosilver style and English language will be compared.
+			Additional languages and styles need separate install files.
+-r, --root = Creates a root directory containing the files missing in old.
+			You need to specify a path to where to place the root directory.
 -h, --help = print this text.
 -f, --outfile = path and name of file to generate. Defautls to stdout
 -v, --verbose = Tell what happens.

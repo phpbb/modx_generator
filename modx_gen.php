@@ -34,7 +34,7 @@ require($script_path . 'functions.' . $phpEx);
 $args = parse_args($argv);
 
 $slap = $diff_files = $diff_dirs = $where_changes = false;
-if (empty($args['old']) || empty($args['new']) || isset($args['help']))
+if (empty($args['old']) || empty($args['new']) || isset($args['help']) || (isset($args['root']) && !is_dir($args['root'])))
 {
 	$slap = true;
 }
@@ -54,7 +54,7 @@ else
 if ($slap)
 {
 	echo 'USAGE:' . "\n";
-	echo 'php modx_gen.php -o path/to/unchanged/dir (or file) -n path/to/changed/dir (or file)' . "\n\n";
+	echo 'php modx_gen.php -o path/to/unchanged/dir (or file) -n path/to/changed/dir (or file) [-r path/for/root/]' . "\n\n";
 	echo 'The parameters to modx_gen.php needs to be after "php modx_gen.php".' . "\n";
 	echo '-o, --old = Original files, path can be absolute or relative.' . "\n";
 	echo '-n, --new = Modified files, path can be absolute or relative.' . "\n";
@@ -62,6 +62,8 @@ if ($slap)
 	echo '-c, --custom = This is an install file for a addition style or language (subsilver2 is a additional style).' . "\n";
 	echo '      Without --custom only the prosilver style and English language will be compared.' . "\n";
 	echo '      Additional languages and styles need separate install files.' . "\n";
+	echo '-r, --root = Creates a root directory containing the files missing in old.' . "\n";
+	echo '      You need to specify a path to where to place the root directory.' . "\n";
 	echo '-h, --help = print this text.' . "\n";
 	echo '-f, --outfile = path and name of file to generate. Defautls to stdout.' . "\n";
 	echo '-v, --verbose = tell what happens.' . "\n";
@@ -135,7 +137,7 @@ else
 	{
 		echo 'Checking for missing files' . "\n";
 	}
-	$where_changes = check_missing($old_arr, $new_arr);
+	$where_changes = check_missing($old_arr, $new_arr, ((isset($args['root'])) ? $args['root'] : false));
 
 	foreach ($old_arr as $file)
 	{
