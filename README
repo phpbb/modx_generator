@@ -26,3 +26,11 @@ The parameters to modx_gen.php needs to be after "php modx_gen.php".
 -f, --outfile = path and name of file to generate. Defautls to stdout
 -v, --verbose = Tell what happens.
 -i, --ignore-version = ignore the version info at the top of files.
+
+CONFIGURATION
+config.php contains two lists.
+$ignore contains file and directories to totally ignore.
+Files in this array are not added to the copy list if they are missing and not compared.
+
+$ignore_ext contains file extensions to not compare.
+Files with these extensions are added to copy and (if selected) copied to root. But they are not compared.
