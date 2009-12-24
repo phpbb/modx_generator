@@ -11,11 +11,9 @@
 /**
  * parses the args sent to the script
  */
-function parse_args($argv)
+function parse_args($argv, $defaults)
 {
-	$args = array();
-	$args['diff_opt'] = DIFF_BASIC;
-	$args['verbose'] =false;
+	$args = $defaults;
 	foreach ($argv as $key => $value)
 	{
 		switch($value)
@@ -37,7 +35,7 @@ function parse_args($argv)
 
 			case '-v':
 			case '--verbose':
-				$args['verbose'] = true;
+				$args['verbose'] = ($args['verbose']) ? false : true;
 			break;
 
 			case '-h':
@@ -47,12 +45,12 @@ function parse_args($argv)
 
 			case '-c':
 			case '--custom':
-				$args['diff_opt'] = DIFF_CUSTOM;
+				$args['custom'] = ($args['custom']) ? false : true;
 			break;
 
 			case '-i':
 			case '--ignore-version':
-				$args['ignore'] = true;
+				$args['ignore_version'] = ($args['ignore_version']) ? false : true;
 			break;
 
 			case '-r':
@@ -73,7 +71,7 @@ function parse_args($argv)
  */
 function rem_ignore(&$old_file, &$new_file)
 {
-	// The version string is usually at line 5, but it can be anywhere in the beginning.
+	// The SVN version string is usually at line 5, but it can be anywhere in the beginning.
 	// Let's check the 20 first lines only. And assume it's in the same place in both files.
 	// Otherwise let's diff that to.
 	for ($i = 0; $i < 20; $i++)
@@ -192,7 +190,7 @@ function get_dir_contents($dir, &$dir_arr, $base = '')
 		if (!in_array($file, $ignore))
 		{
 			$path = $dir . $dir_separator . $file;
-			if ($args['diff_opt'] == DIFF_BASIC && is_dir($path))
+			if (!$args['custom'] && is_dir($path))
 			{
 				// Only diff Prosilver and English
 				// Other styles and languages require their own install files.

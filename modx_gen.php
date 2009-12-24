@@ -31,10 +31,10 @@ require($script_path . 'constants.' . $phpEx);
 require($script_path . 'config.' . $phpEx);
 require($script_path . 'functions.' . $phpEx);
 
-$args = parse_args($argv);
+$args = parse_args($argv, $defaults);
 
 $slap = $diff_files = $diff_dirs = $where_changes = false;
-if (empty($args['old']) || empty($args['new']) || isset($args['help']) || (isset($args['root']) && !is_dir($args['root'])))
+if (empty($args['old']) || empty($args['new']) || !empty($args['help']) || (!empty($args['root']) && !is_dir($args['root'])))
 {
 	$slap = true;
 }
@@ -67,7 +67,7 @@ if ($slap)
 	echo '-h, --help = print this text.' . "\n";
 	echo '-f, --outfile = path and name of file to generate. Defautls to stdout.' . "\n";
 	echo '-v, --verbose = tell what happens.' . "\n";
-	echo '-i, --ignore-version = ignore the version info at the top of files.' . "\n";
+	echo '-i, --ignore-version = ignore SVN version info at the top of files.' . "\n";
 	exit;
 }
 
@@ -78,7 +78,7 @@ if ($diff_files)
 	$old_file = file($args['old']);
 	$new_file = file($args['new']);
 
-	if (isset($args['ignore']))
+	if (!empty($args['ignore_version']))
 	{
 		// Ignore the version strings.
 		rem_ignore($old_file, $new_file);
@@ -137,7 +137,7 @@ else
 	{
 		echo 'Checking for missing files' . "\n";
 	}
-	$where_changes = check_missing($old_arr, $new_arr, ((isset($args['root'])) ? $args['root'] : false));
+	$where_changes = check_missing($old_arr, $new_arr, ((!empty($args['root'])) ? $args['root'] : false));
 
 	foreach ($old_arr as $file)
 	{
@@ -155,7 +155,7 @@ else
 		$old_file = file($args['old'] . $file);
 		$new_file = file($args['new'] . $file);
 
-		if (isset($args['ignore']))
+		if (!empty($args['ignore_version']))
 		{
 			// Ignore the version strings.
 			rem_ignore($old_file, $new_file);
@@ -198,7 +198,7 @@ else
 
 if (isset($xml) && $where_changes)
 {
-	$out_file = (isset($args['outfile'])) ? $args['outfile'] : '';
+	$out_file = (!empty($args['outfile'])) ? $args['outfile'] : '';
 	$xml->modx_close($out_file);
 }
 else

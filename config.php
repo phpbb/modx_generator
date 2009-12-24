@@ -40,3 +40,27 @@ $ignore_ext = array(
 	'tar',
 	'rar',
 );
+
+/**
+ * Default settings for the script parameters.
+ * They can be overridden at runtime by using the parameters in the command line.
+ */
+$defaults = array(
+	// You need to specify a path for the first three if you use them.
+	// 'old' for -o, --old = Original files, path can be absolute or relative.
+	'old' => '',
+	// 'new' for -n, --new = Modified files, path can be absolute or relative.
+	'new' => '',
+	// 'root' for -r, --root = Creates a root directory containing the files missing in old.
+	'root' => '',
+	//'outfile' for -f, --outfile = path and name of file to generate. Defautls to stdout.
+	// You need to specify path and file name if you want to use this.
+	'outfile' => '',
+	// The following are just on or off (true or false).
+	// 'verbose' for -v, --verbose = Tell what happens.
+	'verbose' => false,
+	// 'custom' for -c, --custom = This is an install file for a addition style or language.
+	'custom' => false,
+	// 'ignore_version' for -i, --ignore-version = ignore SVN version info at the top of files.
+	'ignore_version' => true,
+);

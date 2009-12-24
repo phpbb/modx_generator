@@ -25,7 +25,9 @@ The parameters to modx_gen.php needs to be after "php modx_gen.php".
 -h, --help = print this text.
 -f, --outfile = path and name of file to generate. Defautls to stdout
 -v, --verbose = Tell what happens.
--i, --ignore-version = ignore the version info at the top of files.
+-i, --ignore-version = ignore SVN version info at the top of files.
+
+Note that most of the parameters have a default value that can be set in config.php
 
 CONFIGURATION
 config.php contains two lists.
@@ -34,3 +36,5 @@ Files in this array are not added to the copy list if they are missing and not c
 
 $ignore_ext contains file extensions to not compare.
 Files with these extensions are added to copy and (if selected) copied to root. But they are not compared.
+
+It also contains the $defaults array. Look in config.php for more informaion on this array.
