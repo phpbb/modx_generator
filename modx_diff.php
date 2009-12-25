@@ -509,7 +509,7 @@ class modx_diff
 					}
 
 					// Is the next $value also a edit wiht add-after but no find?
-					if (is_array($file_diff[$i]) && $file_diff[$i]['type'] == EDIT && $file_diff[$i]['add-type'] == ADD_AFTER && !isset($file_diff[$i]['find']))
+					if (isset($file_diff[$i]) && is_array($file_diff[$i]) && $file_diff[$i]['type'] == EDIT && $file_diff[$i]['add-type'] == ADD_AFTER && !isset($file_diff[$i]['find']))
 					{
 						// The next $value is a add-after with no find.
 						// Lets merge them together with a empty line between.
@@ -654,7 +654,16 @@ class modx_diff
 
 		// $search_before = ($num - $last_change > 1) ? true : false;
 		// Should this be a add-after or before.
-		$search_before = ($num > 0) ? true : false;
+		$search_before = ($num > 1) ? true : false;
+
+		// If this is a inline and the line can't be mixed with any other line
+		// between the last edit and this line, let's go with it.
+		if ($inline && $this->is_unique($file_diff, $num, $last_change, $inline, true))
+		{
+			$find[0] = $inline;
+			// Inlines don't care about any return value
+			return;
+		}
 
 		// With deletes and in-line edits we always need to search befor the edit.
 		$search_before = ($inline) ? true : $search_before;
@@ -662,15 +671,29 @@ class modx_diff
 		if ($search_before)
 		{
 			// This is a add after.
+			// Need a temporary array to check if the find is unique.
+			$find_arr = array();
+			$cnt = 0;
 			for ($i = $num - 1; $i > $last_change; $i--)
 			{
-				if ((isset($file_diff[$i]) && !is_string($file_diff[$i])) || !isset($file_diff[$i]) || $rows > SEARCH_ROWS - 1)
+				if ((isset($file_diff[$i]) && !is_string($file_diff[$i])) || !isset($file_diff[$i]) || $rows > MAX_SEARCH_ROWS - 1)
 				{
 					break;
 				}
 				$rows++;
 
-				$find[0] = $file_diff[$i] . (($find[0] == '') ? '' : "\n") . $find[0];
+				$find_arr[$cnt++] = $file_diff[$i];
+
+				// Check if we need more in the find.
+				if (isset($file_diff[$i]) && $this->is_unique($file_diff, $num, $last_change, $find_arr))
+				{
+					// If this find is uniqe, let's generate the find and get out of here.
+					foreach ($find_arr as $line)
+					{
+						$find[0] = $line . (($find[0] == '') ? '' : "\n") . $find[0];
+					}
+					break;
+				}
 			}
 			$return = ADD_AFTER;
 		}
@@ -681,19 +704,20 @@ class modx_diff
 			// That way we can be sure that the find starts in the right line.
 			$i = (empty($find[0])) ? 0 : 1;
 			$find[$i] = $inline;
-			$rows = ($i == 1) ? SEARCH_ROWS : $rows + 1;
+			$rows = ($i == 1) ? MAX_SEARCH_ROWS : $rows + 1;
 		}
 
-		if (!$search_before) // || ($inline && $rows < SEARCH_ROWS))
+		if (!$search_before) // || ($inline && $rows < MAX_SEARCH_ROWS))
 		{
 			// A add-before
 			for ($i = $num + 1, $end = $num + 4; $i < $end; $i++)
 			{
-				if ((isset($file_diff[$i]) && !is_string($file_diff[$i])) || !isset($file_diff[$i]) || $rows > SEARCH_ROWS - 1)
+				if ((isset($file_diff[$i]) && !is_string($file_diff[$i])) || !isset($file_diff[$i]) || $rows > MAX_SEARCH_ROWS - 1)
 				{
 					break;
 				}
 				$rows++;
+				// We don't check for unique finds in add before since they onlu occur at the beginning of files.
 				$find[0] .= (($find[0] == '') ? '' : "\n") . $file_diff[$i];
 			}
 			$return = ADD_BEFORE;
@@ -707,6 +731,99 @@ class modx_diff
 		}
 
 		return($return);
+	}
+
+	/**
+	 * is_unique
+	 *
+	 * For contextual finds. Don't make the FINDs bigger than they need to be.
+	 * Checks if the find is unique between the last change and the line to find.
+	 * @param $file_diff, the huge diff array.
+	 * @param $num, the postition for the line to find.
+	 * @param $last_change, the position for the last change.
+	 * @param $find, the string to check if it's unique.
+	 * @return bool true if the find is uniqe, otherwise false.
+	 */
+	private function is_unique($file_diff, $num, $last_change, $find, $inline = false)
+	{
+		// A inline is a string. And those are easy to check.
+		if ($inline)
+		{
+			for ($i = $last_change + 1; $i < $num; $i++)
+			{
+				// If $file_diff[$i] is a array, something has gone terribly wrong.
+				if (isset($file_diff[$i]) && $find == $file_diff[$i])
+				{
+					return(false);
+				}
+			}
+		}
+		else
+		{
+			// A array needs more magic.
+			$size = sizeof($find);
+
+			$last_change = ($last_change < 0) ? 0 : $last_change + 1;
+			// Need to trim and reverse $find.
+			foreach ($find as &$line)
+			{
+				$line = trim($line);
+			}
+			unset($line);
+
+			// We also need to remove empty lines from the beginning.
+			$i = $size - 1;
+			while ($i >= 0 && $find[$i] == '')
+			{
+				unset($find[$i--]);
+			}
+
+			$find = array_reverse($find);
+			if (empty($find))
+			{
+				// We can't have finds only containing empty lines.
+				return(false);
+			}
+
+			// Stop the search when we have FIND lines left. Those should match anyway.
+			for ($i = $last_change, $end = $num - $size; $i < $end; $i++)
+			{
+				// If the first line in $find don't match, there is no need to check the rest.
+				if (isset($file_diff[$i]))
+				{
+					if ($find[0] == trim($file_diff[$i]))
+					{
+						if ($size == 1)
+						{
+							// If find is only 1 line, we can return here.
+							return(false);
+						}
+
+						// If the find contains more than one line we need to check the rest to.
+						$match = true;
+						$j = $i;
+						foreach ($find as $line)
+						{
+							if ($line != trim($file_diff[$j]))
+							{
+								$match = false;
+								break;
+							}
+							$j++;
+						}
+
+						// If we have a match, let's return telling so.
+						if ($match)
+						{
+							return(false);
+						}
+					}
+				}
+			}
+		}
+
+		// The find is unique and can be used.
+		return(true);
 	}
 
 	/**

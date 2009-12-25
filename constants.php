@@ -14,8 +14,9 @@ if(!defined('MODX_VERSION'))
 	define('MODX_VERSION', '1.2.3');
 }
 
-// Search rows needs to be high to avoid identical finds.
-define('SEARCH_ROWS', 8);
+// Don't touch this line. This max setting is needed for now.
+// The finds should never reach this but leave it for safety.
+define('MAX_SEARCH_ROWS', 12);
 
 // Diff options.
 define('DIFF_BASIC', 0);

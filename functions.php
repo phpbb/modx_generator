@@ -76,6 +76,11 @@ function rem_ignore(&$old_file, &$new_file)
 	// Otherwise let's diff that to.
 	for ($i = 0; $i < 20; $i++)
 	{
+		if (!isset($old_file[$i]) || !isset($new_file[$i]))
+		{
+			return;
+		}
+
 		if (strpos($old_file[$i], '@version') !== false && strpos($new_file[$i], '@version') !== false)
 		{
 			// The easiest way to ignore them is to make them identical.
