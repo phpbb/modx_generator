@@ -11,28 +11,47 @@
 /**
  * parses the args sent to the script
  */
-function parse_args($argv, $defaults)
+function parse_args($argv, $argc, $defaults)
 {
 	$args = $defaults;
-	foreach ($argv as $key => $value)
+
+	// The first parameter is the script name.
+	for ($key = 1; $key < $argc; $key++)
 	{
-		switch($value)
+		if (!isset($argv[$key]))
 		{
+			// Should not come here, but...
+			return($args);
+		}
+
+		switch($argv[$key])
+		{
+			// Settings needing a directory or file.
 			case '-o':
 			case '--old':
-				$args['old'] = $argv[$key + 1];
+				$key++;
+				$args['old'] = (isset($argv[$key])) ? $argv[$key] : '';
 			break;
 
 			case '-n':
 			case '--new':
-				$args['new'] = $argv[$key + 1];
+				$key++;
+				$args['new'] = (isset($argv[$key])) ? $argv[$key] : '';
 			break;
 
 			case '-m':
 			case '--modxfile':
-				$args['modxfile'] = $argv[$key + 1];
+				$key++;
+				$args['modxfile'] = (isset($argv[$key])) ? $argv[$key] : '';
 			break;
 
+			case '-r':
+			case '--root':
+				$key++;
+				$args['root'] = (isset($argv[$key])) ? $argv[$key] : '';
+			break;
+
+			// Switches
 			case '-v':
 			case '--verbose':
 				$args['verbose'] = ($args['verbose']) ? false : true;
@@ -53,21 +72,25 @@ function parse_args($argv, $defaults)
 				$args['ignore_version'] = ($args['ignore_version']) ? false : true;
 			break;
 
-			case '-r':
-			case '--root':
-				$args['root'] = $argv[$key + 1];
-			break;
-
 			case '-f':
 			case '--force':
-				$args['force'] = $argv[$key + 1];
+				$args['force'] = ($args['force']) ? false : true;
 			break;
 
 			default:
-				continue;
+				// These do not need any key.
+				if (empty($args['old']))
+				{
+					$args['old'] = $argv[$key];
+				}
+				else
+				{
+					$args['new'] = $argv[$key];
+				}
 			break;
 		}
 	}
+
 	return($args);
 }
 

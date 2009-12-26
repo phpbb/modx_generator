@@ -6,25 +6,34 @@ The resulted MODX file can be imported to the MODX Creator to generate a MODX in
 This is an automated tool, you need to carefully check through the generated edits before submitting for validation.
 
 AutoMOD RC2 has limited support for multiple in-line finds, if your modification has edits with multiple in-line finds you should mention that in the author notes.
+AutoMOD r208 has full support for multiple in-line finds.
 
 Do note that this tool is still in beta stage.
 
 Authors:	Jari Kanerva (tumba25)
 
 USAGE:
-php modx_gen.php -o path/to/unchanged/dir (or file) -n path/to/changed/dir (or file) [-r path/for/root/]
+php modx_gen.php [switches] path/to/unchanged/dir path/to/changed/dir [-r path/for/root/]
+php modx_gen.php [switches] path/to/unchanged/file path/to/changed/file [-r path/for/root/]
+
+The path to the original and unchanged files can be absolute or relative.
+Both old and new need to be either files or dirs.
+The key -o --old is only needed if you have specified old in $defaults and want to override that setting.
 
 The parameters to modx_gen.php needs to be after "php modx_gen.php".
 -o, --old = Original files, path can be absolute or relative.
--n, --new = Modified files, path can be absolute or relative.
--c, --custom = This is an install file for a addition style or language (subsilver2 is a additional style).
-			Without --custom only the prosilver style and English language will be compared.
-			Additional languages and styles need separate install files.
+
 -r, --root = Creates a root directory containing the files missing in old.
-			You need to specify a path to where to place the root directory.
+    You need to specify a path to where to place the root directory.
+-m, --modxfile = path and name of MODX file to generate. Defautls to stdout.
+
+    Switches
+-c, --custom = This is an install file for a addition style or language (subsilver2 is a additional style).
+    Without --custom only the prosilver style and English language will be compared.
+    Additional languages and styles need separate install files.
+-f, --force = Replaces the root directory if it exists.
 -h, --help = print this text.
--f, --outfile = path and name of file to generate. Defautls to stdout
--v, --verbose = Tell what happens.
+-v, --verbose = tell what happens.
 -i, --ignore-version = ignore SVN version info at the top of files.
 
 Note that most of the parameters have a default value that can be set in config.php

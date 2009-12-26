@@ -31,7 +31,7 @@ require($script_path . 'constants.' . $phpEx);
 require($script_path . 'config.' . $phpEx);
 require($script_path . 'functions.' . $phpEx);
 
-$args = parse_args($argv, $defaults);
+$args = parse_args($argv, $argc, $defaults);
 
 $slap = $diff_files = $diff_dirs = $where_changes = false;
 if (empty($args['old']) || empty($args['new']) || !empty($args['help']))
@@ -54,19 +54,21 @@ else
 if ($slap)
 {
 	echo 'USAGE:' . "\n";
-	echo 'php modx_gen.php -o path/to/unchanged/dir (or file) -n path/to/changed/dir (or file) [-r path/for/root/]' . "\n\n";
+	echo 'php modx_gen.php [switches] path/to/unchanged/dir path/to/changed/dir [-r path/for/root/]' . "\n";
+	echo 'php modx_gen.php [switches] path/to/unchanged/file path/to/changed/file [-r path/for/root/]' . "\n\n";
 	echo 'The parameters to modx_gen.php needs to be after "php modx_gen.php".' . "\n";
 	echo '-o, --old = Original files, path can be absolute or relative.' . "\n";
 	echo '-n, --new = Modified files, path can be absolute or relative.' . "\n";
 	echo '      Both old and new need to be either files or dirs.' . "\n";
+	echo '-r, --root = Creates a root directory containing the files missing in old.' . "\n";
+	echo '      You need to specify a path to where to place the root directory.' . "\n";
+	echo '-m, --modxfile = path and name of MODX file to generate. Defautls to stdout.' . "\n\n";
+	echo '    Switches' . "\n";
 	echo '-c, --custom = This is an install file for a addition style or language (subsilver2 is a additional style).' . "\n";
 	echo '      Without --custom only the prosilver style and English language will be compared.' . "\n";
 	echo '      Additional languages and styles need separate install files.' . "\n";
-	echo '-r, --root = Creates a root directory containing the files missing in old.' . "\n";
-	echo '      You need to specify a path to where to place the root directory.' . "\n";
 	echo '-f, --force = Replaces the root directory if it exists.' . "\n";
 	echo '-h, --help = print this text.' . "\n";
-	echo '-m, --modxfile = path and name of MODX file to generate. Defautls to stdout.' . "\n";
 	echo '-v, --verbose = tell what happens.' . "\n";
 	echo '-i, --ignore-version = ignore SVN version info at the top of files.' . "\n";
 	if (empty($args['help']))

@@ -47,9 +47,10 @@ $ignore_ext = array(
  */
 $defaults = array(
 	// You need to specify a path for the first three if you use them.
-	// 'old' for -o, --old = Original files, path can be absolute or relative.
+	// 'old' for the original files, path can be absolute or relative.
+	// If you define a value here and want to override it, you need to use -o or --old at the command line.
 	'old' => '',
-	// 'new' for -n, --new = Modified files, path can be absolute or relative.
+	// 'new' for the modified files, path can be absolute or relative.
 	'new' => '',
 	//'modxfile' for -m, --modxfile = path and name of file to generate. Defautls to stdout.
 	// You need to specify path and file name if you want to use this.
