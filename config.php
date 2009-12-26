@@ -51,12 +51,14 @@ $defaults = array(
 	'old' => '',
 	// 'new' for -n, --new = Modified files, path can be absolute or relative.
 	'new' => '',
+	//'modxfile' for -m, --modxfile = path and name of file to generate. Defautls to stdout.
+	// You need to specify path and file name if you want to use this.
+	'modxfile' => '',
 	// 'root' for -r, --root = Creates a root directory containing the files missing in old.
 	'root' => '',
-	//'outfile' for -f, --outfile = path and name of file to generate. Defautls to stdout.
-	// You need to specify path and file name if you want to use this.
-	'outfile' => '',
 	// The following are just on or off (true or false).
+	// 'force' for -f, --force = Replaces the root directory if it exists.
+	'force' => true,
 	// 'verbose' for -v, --verbose = Tell what happens.
 	'verbose' => false,
 	// 'custom' for -c, --custom = This is an install file for a addition style or language.

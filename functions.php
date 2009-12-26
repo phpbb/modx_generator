@@ -28,9 +28,9 @@ function parse_args($argv, $defaults)
 				$args['new'] = $argv[$key + 1];
 			break;
 
-			case '-f':
-			case '--outfile':
-				$args['outfile'] = $argv[$key + 1];
+			case '-m':
+			case '--modxfile':
+				$args['modxfile'] = $argv[$key + 1];
 			break;
 
 			case '-v':
@@ -56,6 +56,11 @@ function parse_args($argv, $defaults)
 			case '-r':
 			case '--root':
 				$args['root'] = $argv[$key + 1];
+			break;
+
+			case '-f':
+			case '--force':
+				$args['force'] = $argv[$key + 1];
 			break;
 
 			default:
@@ -93,11 +98,11 @@ function rem_ignore(&$old_file, &$new_file)
 /**
  * Checks the directory arrays for missing files in $old_dir and writes a copy-tag if files are missing.
  */
-function check_missing($old_arr, $new_arr, $copy = false)
+function check_missing($old_arr, $new_arr)
 {
 	global $xml, $where_changes, $dir_separator, $args;
 
-	$missing = false;
+	$missing = $copy = false;
 
 	foreach ($new_arr as $file)
 	{
@@ -105,14 +110,55 @@ function check_missing($old_arr, $new_arr, $copy = false)
 		{
 			if (!$missing)
 			{
-				if ($copy)
+				if (!empty($args['root']))
 				{
-					if (!mkdir($copy . $dir_separator . 'root'))
+					// Check that the parent directory for root exists, is a directory and that we have write permissions.
+					if (!file_exists($args['root']) || !is_dir($args['root']))
 					{
-						echo 'Could not create root directory in: ' . $copy . "\n";
-						exit;
+						echo '"' . $args['root'] . '" do not exist or is not a directory.' . "\n";
+						exit(20);
 					}
-					$copy .= $dir_separator . 'root' . $dir_separator;
+
+					$copy = $args['root'] . ((substr($args['root'], -1) != $dir_separator) ? $dir_separator : '');
+					if (!is_writable($args['root']))
+					{
+						echo '"' . $args['root'] . '" is not writable.' . "\n";
+						exit(20);
+					}
+
+					$copy .= 'root' . $dir_separator;
+					if (file_exists($copy))
+					{
+						// Ouch, the root directory exists.
+						if ($args['force'])
+						{
+							// We need write permissions here to.
+							if (!is_writable($copy))
+							{
+								echo '"' . $copy . '" is not writable.' . "\n";
+								exit(20);
+							}
+
+							if ($args['verbose'])
+							{
+								echo 'Deleting old root directory' . "\n";
+							}
+
+							// Now let's delete the old root directory
+							delete_dir($copy);
+						}
+						else
+						{
+							echo '"' . $copy . '" already exists.' . "\n";
+							exit(20);
+						}
+					}
+
+					if (!@mkdir($copy))
+					{
+						echo 'Could not create: ' . $copy . "\n";
+						exit(20);
+					}
 				}
 				$missing = true;
 				$where_changes = true;
@@ -122,7 +168,6 @@ function check_missing($old_arr, $new_arr, $copy = false)
 			if ($copy)
 			{
 				// Copy files to root/.
-				// First check that the target directory exists
 				if ($args['verbose'])
 				{
 					echo 'Copying: ' . $file . "\n";
@@ -133,18 +178,20 @@ function check_missing($old_arr, $new_arr, $copy = false)
 				foreach ($dir_arr as $value)
 				{
 					$dir .= (($dir == '') ? '' : $dir_separator) . $value;
+
+					// Check that the target directory exists.
 					if(!file_exists($copy . $dir))
 					{
-						if (!mkdir($copy . $dir))
+						if (!@mkdir($copy . $dir))
 						{
 							echo 'Could not create: ' . $copy . $dir . "\n";
 						}
 					}
 				}
-				if (!copy($args['new'] . $file, $copy . $file))
+				if (!@copy($args['new'] . $file, $copy . $file))
 				{
 					echo 'Could not copy: ' . $file . "\n";
-					exit;
+					exit(20);
 				}
 			}
 			// On Windows the directory separator will be \, so we need to handle that.
@@ -159,6 +206,36 @@ function check_missing($old_arr, $new_arr, $copy = false)
 	}
 
 	return(false);
+}
+
+/**
+ * Recursive delete a directory.
+ */
+function delete_dir($dir, $base = '')
+{
+	global $dir_separator;
+
+	$dir .= (substr($dir, -1) != $dir_separator) ? $dir_separator : '';
+
+	$handle = opendir($dir);
+	while (($file = readdir($handle)) !== false)
+	{
+		if ($file != '.' && $file != '..')
+		{
+			$path = $dir . $file;
+			if (is_file($path))
+			{
+				unlink($path);
+			}
+			else if (is_dir($path))
+			{
+				delete_dir($path, $base . $file);
+			}
+		}
+	}
+	closedir($handle);
+
+	rmdir( $dir );
 }
 
 /**

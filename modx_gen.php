@@ -34,7 +34,7 @@ require($script_path . 'functions.' . $phpEx);
 $args = parse_args($argv, $defaults);
 
 $slap = $diff_files = $diff_dirs = $where_changes = false;
-if (empty($args['old']) || empty($args['new']) || !empty($args['help']) || (!empty($args['root']) && !is_dir($args['root'])))
+if (empty($args['old']) || empty($args['new']) || !empty($args['help']))
 {
 	$slap = true;
 }
@@ -64,11 +64,19 @@ if ($slap)
 	echo '      Additional languages and styles need separate install files.' . "\n";
 	echo '-r, --root = Creates a root directory containing the files missing in old.' . "\n";
 	echo '      You need to specify a path to where to place the root directory.' . "\n";
+	echo '-f, --force = Replaces the root directory if it exists.' . "\n";
 	echo '-h, --help = print this text.' . "\n";
-	echo '-f, --outfile = path and name of file to generate. Defautls to stdout.' . "\n";
+	echo '-m, --modxfile = path and name of MODX file to generate. Defautls to stdout.' . "\n";
 	echo '-v, --verbose = tell what happens.' . "\n";
 	echo '-i, --ignore-version = ignore SVN version info at the top of files.' . "\n";
-	exit;
+	if (empty($args['help']))
+	{
+		exit(20);
+	}
+	else
+	{
+		exit(0);
+	}
 }
 
 if ($diff_files)
@@ -137,7 +145,7 @@ else
 	{
 		echo 'Checking for missing files' . "\n";
 	}
-	$where_changes = check_missing($old_arr, $new_arr, ((!empty($args['root'])) ? $args['root'] : false));
+	$where_changes = check_missing($old_arr, $new_arr);
 
 	foreach ($old_arr as $file)
 	{
@@ -198,7 +206,7 @@ else
 
 if (isset($xml) && $where_changes)
 {
-	$out_file = (!empty($args['outfile'])) ? $args['outfile'] : '';
+	$out_file = (!empty($args['modxfile'])) ? $args['modxfile'] : '';
 	$xml->modx_close($out_file);
 }
 else
@@ -216,3 +224,4 @@ if ($args['verbose'])
 	$totaltime = ($endtime - $starttime);
 	echo 'Execution time: ' . $totaltime . ' seconds' . "\n";
 }
+exit(0);
