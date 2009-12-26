@@ -235,7 +235,7 @@ function delete_dir($dir, $base = '')
 	}
 	closedir($handle);
 
-	rmdir( $dir );
+	rmdir($dir);
 }
 
 /**
