@@ -46,7 +46,7 @@ $ignore_ext = array(
  * They can be overridden at runtime by using the parameters in the command line.
  */
 $defaults = array(
-	// You need to specify a path for the first three if you use them.
+	// You need to specify a path for the first four if you use them.
 	// 'old' for the original files, path can be absolute or relative.
 	// If you define a value here and want to override it, you need to use -o or --old at the command line.
 	'old' => '',
@@ -57,7 +57,8 @@ $defaults = array(
 	'modxfile' => '',
 	// 'root' for -r, --root = Creates a root directory containing the files missing in old.
 	'root' => '',
-	// The following are just on or off (true or false).
+
+	// The following are just on or off switches (true or false).
 	// 'force' for -f, --force = Replaces the root directory if it exists.
 	'force' => false,
 	// 'verbose' for -v, --verbose = Tell what happens.

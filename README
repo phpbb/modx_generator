@@ -12,7 +12,18 @@ Do note that this tool is still in beta stage.
 
 Authors:	Jari Kanerva (tumba25)
 
+INSTALLATION:
+To install this tool simply extract the MODX Generator package somewhere on your computer. You will need all files.
+
+The MODX Generator uses Pear Text_Diff for the initial file comparison.
+The Text_Diff files in the modx_generator directory are slightly modified and can't be replaced.
+
+You will need the CLI version of PHP 4.2.0 or higher.
+
 USAGE:
+To run the generator, open a new shell (command-line interface / command prompt).
+Then call the PHP executable, followed by the path to modx_gen.php. And after that come the arguments.
+
 php modx_gen.php [switches] path/to/unchanged/dir path/to/changed/dir [-r path/for/root/]
 php modx_gen.php [switches] path/to/unchanged/file path/to/changed/file [-r path/for/root/]
 

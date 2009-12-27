@@ -18,8 +18,8 @@ $starttime = $mtime;
 $phpEx = substr(strrchr(__FILE__, '.'), 1);
 $script_path = dirname(__FILE__);
 
-$script_path .= (strpos($script_path, '/') !== false) ? '/' : '\\';
 $dir_separator = (strpos($script_path, '/') !== false) ? '/' : '\\';
+$script_path .= $dir_separator;
 
 require($script_path . 'diff' . $dir_separator . 'Diff.' . $phpEx);
 require($script_path . 'diff' . $dir_separator . 'inline.' . $phpEx);
