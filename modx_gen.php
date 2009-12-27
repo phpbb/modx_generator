@@ -28,7 +28,7 @@ require($script_path . 'modx_diff.' . $phpEx);
 require($script_path . 'modx_writer.' . $phpEx);
 
 require($script_path . 'constants.' . $phpEx);
-require($script_path . 'config.' . $phpEx);
+require($script_path . 'generator_config.' . $phpEx);
 require($script_path . 'functions.' . $phpEx);
 
 $args = parse_args($argv, $argc, $defaults);

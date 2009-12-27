@@ -24,15 +24,18 @@ USAGE:
 To run the generator, open a new shell (command-line interface / command prompt).
 Then call the PHP executable, followed by the path to modx_gen.php. And after that come the arguments.
 
-php modx_gen.php [switches] path/to/unchanged/dir path/to/changed/dir [-r path/for/root/]
-php modx_gen.php [switches] path/to/unchanged/file path/to/changed/file [-r path/for/root/]
+php modx_gen.php [switches] path/to/unchanged/dir path/to/changed/dir [-r path | -m path]
+php modx_gen.php [switches] path/to/unchanged/file path/to/changed/file [-r path | -m path]
 
 The path to the original and unchanged files can be absolute or relative.
 Both old and new need to be either files or dirs.
-The key -o --old is only needed if you have specified old in $defaults and want to override that setting.
+The key -o is only needed if you have specified old in generator_config.php and want to override that setting.
+
+The parameters can be given in any order as long as old is before new if you don't specify the -o and -f keys.
 
 The parameters to modx_gen.php needs to be after "php modx_gen.php".
 -o, --old = Original files, path can be absolute or relative.
+-n, --new = Modified files, path can be absolute or relative.
 
 -r, --root = Creates a root directory containing the files missing in old.
     You need to specify a path to where to place the root directory.
@@ -47,14 +50,14 @@ The parameters to modx_gen.php needs to be after "php modx_gen.php".
 -v, --verbose = tell what happens.
 -i, --ignore-version = ignore SVN version info at the top of files.
 
-Note that most of the parameters have a default value that can be set in config.php
+Note that most of the parameters have a default value that can be set in generator_config.php
 
 CONFIGURATION
-config.php contains two lists.
+generator_config.php contains two lists.
 $ignore contains file and directories to totally ignore.
 Files in this array are not added to the copy list if they are missing and not compared.
 
 $ignore_ext contains file extensions to not compare.
 Files with these extensions are added to copy and (if selected) copied to root. But they are not compared.
 
-It also contains the $defaults array. Look in config.php for more informaion on this array.
+It also contains the $defaults array. Look in generator_config.php for more informaion on this array.
