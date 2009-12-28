@@ -1,0 +1,63 @@
+MODX Generator will take an original phpBB folder and compare it to a copy with applied modifications. The resulting diff is then converted to the MODX format. Copy, edit and inline actions are automatically generated.
+
+MODX Generator can also be used to upgrade modifications and handles both directories and files.
+
+The resulted MODX file can be imported to the MODX Creator to generate a MODX install file.
+This is an automated tool, you need to carefully check through the generated edits before submitting for validation.
+
+AutoMOD RC2 has limited support for multiple in-line finds, if your modification has edits with multiple in-line finds you should mention that in the author notes.
+AutoMOD r208 has full support for multiple in-line finds.
+
+Do note that this tool is still in beta stage.
+
+Authors:	Jari Kanerva (tumba25)
+
+INSTALLATION:
+To install this tool simply extract the MODX Generator package somewhere on your computer. You will need all files.
+
+The MODX Generator uses Pear Text_Diff for the initial file comparison.
+The Text_Diff files in the modx_generator directory are slightly modified and can't be replaced.
+
+You will need the CLI version of PHP 4.2.0 or higher.
+
+USAGE:
+To run the generator, open a new shell (command-line interface / command prompt).
+Then call the PHP executable, followed by the path to modx_gen.php. And after that come the arguments.
+
+php modx_gen.php [switches] path/to/unchanged/dir path/to/changed/dir [-r path | -m path]
+php modx_gen.php [switches] path/to/unchanged/file path/to/changed/file [-r path | -m path]
+
+The path to the original and unchanged files can be absolute or relative.
+Both old and new need to be either files or dirs.
+The key -o is only needed if you have specified old in generator_config.php and want to override that setting.
+
+The parameters can be given in any order as long as old is before new if you don't specify the -o and -f keys.
+
+The parameters to modx_gen.php needs to be after "php modx_gen.php".
+-o, --old = Original files, path can be absolute or relative.
+-n, --new = Modified files, path can be absolute or relative.
+
+-r, --root = Creates a root directory containing the files missing in old.
+    You need to specify a path to where to place the root directory.
+-m, --modxfile = path and name of MODX file to generate. Defautls to stdout.
+
+    Switches
+-c, --custom = This is an install file for a addition style or language (subsilver2 is a additional style).
+    Without --custom only the prosilver style and English language will be compared.
+    Additional languages and styles need separate install files.
+-f, --force = Replaces the root directory if it exists.
+-h, --help = print this text.
+-v, --verbose = tell what happens.
+-i, --ignore-version = ignore SVN version info at the top of files.
+
+Note that most of the parameters have a default value that can be set in generator_config.php
+
+CONFIGURATION
+generator_config.php contains two lists.
+$ignore contains file and directories to totally ignore.
+Files in this array are not added to the copy list if they are missing and not compared.
+
+$ignore_ext contains file extensions to not compare.
+Files with these extensions are added to copy and (if selected) copied to root. But they are not compared.
+
+It also contains the $defaults array. Look in generator_config.php for more informaion on this array.
