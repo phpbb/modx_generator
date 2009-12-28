@@ -1,0 +1,16 @@
+Changes since 1.0.0-b1
+Improved the README file.
+config.php is renamed to generator_config.php to avoid confusion with other config files.
+Some more file names added to the default ignore list.
+Ignore version is a parameter to the script, so it's removed from the config.
+Parses meta tags from other generators and puts them in the generated MODX file.
+Changed the generator meta tag.
+There are now default settings in generator_config.php for the script parameters.
+Contextual finds, except for in-line finds.
+Renamed -f --outfile to -m --modxfile.
+Added -r, --root = Creates a root directory containing the files missing in old.
+Added -f, --force = Replaces the root directory if it exists.
+Added exit values so calling apps knows if it was successful.
+Removed the third parameter to check_missing(), $args are global here.
+old and new are now main parameters to the app so -o and -n are not needed. old needs to be first.
+-o are still needed if there is a default setting that needs to be overridden.
