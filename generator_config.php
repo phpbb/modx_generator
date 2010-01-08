@@ -24,6 +24,7 @@ $ignore = array(
 	'store',
 	'docs',
 	'.svn',
+	'.git',
 	'.DS_Store',
 );
 
